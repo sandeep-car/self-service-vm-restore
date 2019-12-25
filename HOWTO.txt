@@ -1,0 +1,30 @@
+* Build Centos 7 VM on AHV cluster.
+yum -y install emacs wget perl-core zlib-devel libffi-devel bzip2-devel readline-devel libuuid-devel
+yum groupinstall -y "Development Tools"
+# To use newer openssl libraries.
+# Add the following 3 lines to ~/.bashrc otherwise Python won't be able to find the ssl module.
+export LDFLAGS="-L/usr/local/lib64/"
+export LD_LIBRARY_PATH="/usr/local/lib64/"
+export CPPFLAGS="-I/usr/local/include -I/usr/local/include/openssl"
+. ~/.bashrc
+mkdir -p ~/source/openssl; cd ~/source/openssl; wget https://www.openssl.org/source/openssl-1.1.1.tar.gz
+tar zxvf openssl-1.1.1.tar.gz; cd openssl-1.1.1
+./config --prefix=/usr/local/ --openssldir=/usr/local/ shared zlib
+make; make install
+mkdir -p ~/source/python3; cd ~/source/python3;  wget https://www.python.org/ftp/python/3.8.1/Python-3.8.1.tgz
+tar xzvf Python-3.8.1.tgz ; cd Python-3.8.1
+# --enable-optimization seems to increase time of build.
+./configure --prefix=/usr/local  --with-openssl=/usr/local
+make; make altinstall
+cd /usr/local/bin
+ln -s pip3.8 pip
+ln -s python3.8 python
+cd ~/source
+git clone git://github.com/requests/requests.git
+cd requests
+pip install .
+cd ~/source
+git clone git://github.com/sandeep-car/self-service-vm-restore.git
+# see your code here.
+cd ~/source/self-serviuce-vm-restore
+chmod 700 *.py
