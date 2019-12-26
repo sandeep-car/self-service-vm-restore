@@ -90,7 +90,8 @@ class my_api():
         # print("Response code: %s" % server_response.status_code)
         return server_response.status_code ,json.loads(server_response.text)
 
-    # Just hang out until the task is complete.
+    # Just hang out until the task is complete. 
+    # We use this function after the VM restore and before powering on the VM.
     def poll_task(self, task_uuid):
 
         cluster_url = self.base_urlv2 + "tasks/poll/"
