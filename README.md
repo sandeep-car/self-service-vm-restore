@@ -6,7 +6,7 @@ Please be sure to update variables in clusterconfig.py also.
 
 The use case here is to:
 
-a. Take a snapshot (or more than one snapshot) of a VM.
+a. Take a snapshot (or more than one snapshot) of a VM from Prism Element.
 
 b. Restore the VM to a prior snapshot using merge_vm.py.
 
