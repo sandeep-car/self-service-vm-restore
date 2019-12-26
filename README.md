@@ -17,7 +17,8 @@ You can use this output to figure out which snapshot to restore your VM to.
 Security concerns:
 
 The biggest security concern with restoring VMs is that user A can mistakenly restore a VM belonging to user B. Workaround 
-here is the variable allowed_vm_list.
+here is the variable "allowed_vm_list" in clusterconfig.py.
+
 Snapshot restores of a VM are not allowed unless the VM name is included in allowed_vm_list. This also means the 
 Deployment VM must have a root user as well as an ordinary user who is not allowed to view/modify Python code. This
 is recommended practice anyway because restapiuser passwords are stored in the clusterconfig.py file.
