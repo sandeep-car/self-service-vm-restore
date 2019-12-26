@@ -57,6 +57,12 @@ if __name__ == "__main__":
         # We're here to restore a VM to a prior snapshot.
         snapshot_name = sys.argv[1]
         vm_name = sys.argv[2]
+
+        # If the specified VM is not an allowed VM, exit right now.
+        if vm_name not in C.allowed_vm_list:
+            print (">>> Cannot proceed because you are not allowed to restore:",vm_name)
+            sys.exit(1)
+
         found = False
         # Get the UUID of the VM.
         # Get information about all VMs in the cluster.
@@ -71,7 +77,7 @@ if __name__ == "__main__":
         try:
             print ("UUID of your VM is:",vm_uuid)
         except NameError:
-            print (">>> Cannot proceed because we cannot find",vm_name)
+            print (">>> Cannot proceed because we cannot find:",vm_name)
             sys.exit(1)
 
         # pprint(all_snapshots_list)
@@ -94,7 +100,7 @@ if __name__ == "__main__":
         status,resp = mycluster.merge_vm(vm_uuid,ss_uuid)
         print("Status: ",status)
  
-        print ("Successfully merged: ",vm_name, " with ", snapshot_name)
+        print ("Successfully restored:",vm_name, "to", snapshot_name)
         taskid = resp["task_uuid"]
         mycluster.poll_task(taskid)
         mycluster.power_on_vm(vm_uuid)

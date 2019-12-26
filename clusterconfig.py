@@ -10,6 +10,9 @@ src_cluster_ip = "xx.xx.xx.xx"
 src_cluster_admin = "restapiuser"
 src_cluster_pwd = "blahblahblah"
 
+# List of VMs that we are allowed to restore snapshots to.
+allowed_vm_list=["golden_vm", "silver_vm", "bronze_vm"]
+
 # ========== DO NOT CHANGE ANYTHING UNDER THIS LINE =====
 class my_api():
     def __init__(self,ip,username,password):
@@ -68,10 +71,10 @@ class my_api():
         # print("Response code: %s" % server_response.status_code)
         return server_response.status_code ,json.loads(server_response.text)
 
-    # Merge VM with the snapshot.
+    # Restore VM to snapshot.
     def merge_vm(self, vmid, ssid):
 
-        print("Begin merge..")
+        print("Begin restore..")
         cluster_url = self.base_urlv2 + "vms/" + str(quote(vmid)) + "/restore/"
         post_dict = {}
         post_dict["restore_network_configuration"] = True
