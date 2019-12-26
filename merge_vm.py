@@ -46,6 +46,7 @@ if __name__ == "__main__":
         # Spew out all undeleted snapshots in the cluster.
         status,resp = mycluster.get_snapshots()
         all_snapshots_list = resp["entities"]
+        # We could also include the VM, and the creation time of the snapshot.
         if (sys.argv[1] == "--snapshots"):
             print ("Here are the available snapshots that may be merged:")
             for snapshot in all_snapshots_list:
@@ -53,7 +54,7 @@ if __name__ == "__main__":
                     print (snapshot["snapshot_name"])
             sys.exit(0)
 
-        # We're here to restore a snapshot to a VM.
+        # We're here to restore a VM to a prior snapshot.
         snapshot_name = sys.argv[1]
         vm_name = sys.argv[2]
         found = False
