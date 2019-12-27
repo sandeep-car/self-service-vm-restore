@@ -84,9 +84,9 @@ class my_api():
         return server_response.status_code ,json.loads(server_response.text)
 
     # Power on VM with this UUID.
-    def power_on_vm(self, vmid):
+    def power_on_vm(self, vmid, vm_name):
         
-        print("Powering on VM:",vmid)
+        print("Powering on VM:",vm_name)
         cluster_url = self.base_urlv2 + "vms/" + str(quote(vmid)) + "/set_power_state/"
         vm_power_post = {"transition":"ON"}
         server_response = self.sessionv2.post(cluster_url, data=json.dumps(vm_power_post))

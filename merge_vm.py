@@ -14,6 +14,7 @@ import sys
 import requests
 import clusterconfig as C
 from pprint import pprint
+from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 # Print usage messages.
@@ -43,15 +44,30 @@ if __name__ == "__main__":
             print("Did you remember to update the config file?")
             sys.exit(1)
 
+        # Get information about all VMs in the cluster.
+        status,all_vms = mycluster.get_all_vm_info()
+        all_vms_list = all_vms["entities"]
+        vm_by_name = {}
+        vm_by_uuid = {}
+        for vm_dict in all_vms_list:
+            t_vm_uuid = vm_dict["uuid"]
+            t_vm_name = vm_dict["name"]
+            vm_by_name[t_vm_name] = t_vm_uuid
+            vm_by_uuid[t_vm_uuid] = t_vm_name
+        #pprint(all_vms_list)
+
         # Spew out all undeleted snapshots in the cluster.
         status,resp = mycluster.get_snapshots()
         all_snapshots_list = resp["entities"]
-        # We could also include the VM, and the creation time of the snapshot.
         if (sys.argv[1] == "--snapshots"):
-            print ("Here are the available snapshots that may be merged:")
+            #pprint(all_snapshots_list)
+            print ("Here are the available snapshots that may be restored:")
             for snapshot in all_snapshots_list:
                 if (snapshot["deleted"] == False):
-                    print (snapshot["snapshot_name"])
+                    parent_vm_uuid = snapshot["vm_uuid"]
+                    parent_vm_name = vm_by_uuid[parent_vm_uuid]
+                    ss_time_str = datetime.fromtimestamp(snapshot["created_time"]/1000000).strftime('%Y-%m-%d %H:%M:%S')
+                    print (">>> Snapshot Name:",snapshot["snapshot_name"],"VM Name:",parent_vm_name,"TimeStamp:",ss_time_str)
             sys.exit(0)
 
         # We're here to restore a VM to a prior snapshot.
@@ -64,16 +80,8 @@ if __name__ == "__main__":
             sys.exit(1)
 
         found = False
-        # Get the UUID of the VM.
-        # Get information about all VMs in the cluster.
-        status,all_vms = mycluster.get_all_vm_info()
-        all_vms_list = all_vms["entities"]
-        # pprint(all_vms_list)
-        for vm_dict in all_vms_list:
-            # If you were looking for a VM with a particular UUID, you would be matching for it here.
-            if (vm_name == vm_dict["name"]):
-                vm_uuid = vm_dict["uuid"]
-                break
+        vm_uuid = vm_by_name[vm_name]
+
         try:
             print ("UUID of your VM is:",vm_uuid)
         except NameError:
@@ -103,7 +111,7 @@ if __name__ == "__main__":
         print ("Successfully restored:",vm_name, "to", snapshot_name)
         taskid = resp["task_uuid"]
         mycluster.poll_task(taskid)
-        mycluster.power_on_vm(vm_uuid)
+        mycluster.power_on_vm(vm_uuid,vm_name)
 
     except Exception as ex:
         print(ex)
