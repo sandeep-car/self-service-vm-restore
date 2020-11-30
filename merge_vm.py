@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3.8
 #
 # DISCLAIMER: This script is not supported by Nutanix. Please contact
-# Sandeep Cariapa (first.last@nutanix.com) if you have any questions.
+# Sandeep Cariapa (lastname@gmail.com) if you have any questions.
 # Last updated: 12/26/2019
 # This script uses Python 3.8.
 # NOTE: 
